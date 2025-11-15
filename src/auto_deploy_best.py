@@ -30,7 +30,6 @@ def auto_deploy_best_model():
         model_uri = f"runs:/{run_id}/svm_model"
         model = mlflow.sklearn.load_model(model_uri)
     
-    # Save for production
     import pickle
     with open('production_model.pkl', 'wb') as f:
         pickle.dump(model, f)
