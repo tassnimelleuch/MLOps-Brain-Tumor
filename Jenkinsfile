@@ -21,7 +21,7 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: 'production_model.pkl'
-            echo "🎉 SUCCESS: Best model selected and saved!"
+            echo " SUCCESS: Best model selected and saved!"
         }
     }
 }
