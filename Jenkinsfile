@@ -1,38 +1,47 @@
 pipeline {
     agent any
     
+    triggers {
+        githubPush()  // Webhook trigger
+    }
+    
     stages {
-        stage('Checkout Code & Model Info') {
+        stage('Checkout from GitHub') {
             steps {
-                git branch: 'main', url: 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git'
+                echo "🚀 Testing GitHub connection..."
+                git branch: 'main', 
+                url: 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git',
+                credentialsId: 'github-token'
+                
+                // List files to confirm checkout worked
+                bat 'dir'
             }
         }
         
-        stage('Get Best Model from Registry') {
+        stage('Verify Project Structure') {
             steps {
+                echo "📁 Checking project structure..."
                 bat '''
-                call venv\\Scripts\\activate && 
-                python src/get_model_from_registry.py
+                echo "=== Project Files ==="
+                dir src\\
+                echo "=== Requirements ==="
+                type requirements.txt
                 '''
             }
         }
-        
-        stage('Test Model') {
-            steps {
-                bat '''
-                call venv\\Scripts\\activate && 
-                python src/test_model_validation.py
-                '''
-            }
+    }
+    
+    post {
+        always {
+            echo "✅ GitHub connection test completed!"
         }
-        
-        stage('Deploy Model') {
-            steps {
-                bat '''
-                call venv\\Scripts\\activate && 
-                python src/deploy_model.py
-                '''
-            }
+        success {
+            echo "🎉 SUCCESS: GitHub webhook is working!"
+            // Archive the successful build info
+            archiveArtifacts artifacts: '**/*.txt,**/*.py', excludes: 'venv/**'
+        }
+        failure {
+            echo "❌ FAILED: Check GitHub credentials or network"
         }
     }
 }
