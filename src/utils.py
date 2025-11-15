@@ -25,8 +25,8 @@ def load_images(data_path, img_size=(150,150)):
 
             img = cv2.resize(img, img_size)
             X.append(img)
-            y.append(0 if cls == 'no' else 1)  # no=0, yes=1
+            y.append(0 if cls == 'no' else 1) 
 
     print(f"Loaded {len(X)} images")
     print(f"Class distribution: {np.bincount(y)}")
-    return np.array(X), np.array(y), class_names  # Remove /255.0 for now
+    return np.array(X), np.array(y), class_names 
