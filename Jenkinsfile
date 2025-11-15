@@ -8,9 +8,9 @@ pipeline {
                 url: 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git',
                 credentialsId: 'github-token'
                 
-                bat '''
-                python -m venv venv
-                call venv\\Scripts\\activate
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
                 pip install -r requirements.txt
                 python src/auto_deploy_best.py
                 '''
