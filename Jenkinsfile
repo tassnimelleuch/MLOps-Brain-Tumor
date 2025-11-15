@@ -5,6 +5,10 @@ pipeline {
         githubPush()  
     }
     
+    environment {
+        MLFLOW_TRACKING_URI = 'file:///./mlruns'
+    }
+    
     stages {
         stage('Checkout from GitHub') {
             steps {
@@ -12,20 +16,43 @@ pipeline {
                 git branch: 'main', 
                 url: 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git',
                 credentialsId: 'github-token'
-                
-                // List files to confirm checkout worked
-                bat 'dir'
             }
         }
         
-        stage('Verify Project Structure') {
+        stage('Get Best Model from MLflow') {
             steps {
-                echo "📁 Checking project structure..."
+                echo "🔍 Finding best model from MLflow..."
                 bat '''
-                echo "=== Project Files ==="
-                dir src\\
-                echo "=== Requirements ==="
-                type requirements.txt
+                call venv\\Scripts\\activate
+                python src/auto_deploy_best.py
+                '''
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                echo "🐳 Building Docker container..."
+                bat '''
+                docker build -t brain-tumor-model:latest -f Dockerfile .
+                '''
+            }
+        }
+        
+        stage('Test Docker Container') {
+            steps {
+                echo "🧪 Testing Docker container..."
+                bat '''
+                docker run --rm brain-tumor-model:latest python test_model.py
+                '''
+            }
+        }
+        
+        stage('Push to Registry') {
+            steps {
+                echo "📦 Pushing to Docker Registry..."
+                bat '''
+                docker tag brain-tumor-model:latest your-registry/brain-tumor-model:latest
+                docker push your-registry/brain-tumor-model:latest
                 '''
             }
         }
@@ -33,14 +60,10 @@ pipeline {
     
     post {
         always {
-            echo "✅ GitHub connection test completed!"
+            echo "✅ MLOps pipeline completed!"
         }
         success {
-            echo "🎉 SUCCESS: GitHub webhook is working!"
-            archiveArtifacts artifacts: '**/*.txt,**/*.py', excludes: 'venv/**'
-        }
-        failure {
-            echo "❌ FAILED: Check GitHub credentials or network"
+            echo "🎉 SUCCESS: Model containerized and ready for deployment!"
         }
     }
 }
