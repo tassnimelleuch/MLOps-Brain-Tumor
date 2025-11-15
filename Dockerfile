@@ -2,16 +2,26 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy model and source code
-COPY production_model.pkl .
+COPY best_model/ ./best_model/
 COPY src/ ./src/
 
 # Create API endpoint
 COPY app.py .
+
+# Create non-root user for security
+RUN useradd -m -u 1000 modeluser && chown -R modeluser:modeluser /app
+USER modeluser
 
 EXPOSE 8000
 
