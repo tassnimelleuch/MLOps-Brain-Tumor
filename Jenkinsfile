@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     triggers {
-        githubPush()  // Webhook trigger
+        githubPush()  
     }
     
     stages {
@@ -37,7 +37,6 @@ pipeline {
         }
         success {
             echo "🎉 SUCCESS: GitHub webhook is working!"
-            // Archive the successful build info
             archiveArtifacts artifacts: '**/*.txt,**/*.py', excludes: 'venv/**'
         }
         failure {
