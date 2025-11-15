@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Code & Model Info') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-username/MLOps-Brain-Tumor.git'
+                git branch: 'main', url: 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git'
             }
         }
         
