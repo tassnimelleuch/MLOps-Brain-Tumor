@@ -6,8 +6,7 @@ def load_images(data_path, img_size=(150,150)):
     X, y = [], []
     class_names = []
 
-    # Fix: Use correct path structure
-    for cls in ['no', 'yes']:  # Only process 'no' and 'yes' folders
+    for cls in ['no', 'yes']: 
         cls_path = os.path.join(data_path, cls)
         
         if not os.path.exists(cls_path):
