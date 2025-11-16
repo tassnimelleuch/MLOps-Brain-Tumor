@@ -12,8 +12,10 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy model and source code
-COPY best_model/ ./best_model/
+# Copy the production model from Jenkins
+COPY production_model.pkl ./model/production_model.pkl
+
+# Copy source code
 COPY src/ ./src/
 
 # Create API endpoint
