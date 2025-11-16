@@ -25,7 +25,6 @@ def extract_features(images):
         feature_vector.append(np.std(gray))
         feature_vector.append(np.median(gray))
         
-        # 2. Simple histogram (first 10 bins)
         hist = cv2.calcHist([gray], [0], None, [10], [0, 256])
         feature_vector.extend(hist.flatten())
         
