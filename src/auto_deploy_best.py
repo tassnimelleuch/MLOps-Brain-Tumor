@@ -11,13 +11,12 @@ def auto_deploy_best_model():
     experiment = mlflow.get_experiment_by_name("Brain_Tumor_Classification")
     
     if experiment is None:
-        print("❌ Experiment 'Brain_Tumor_Classification' not found!")
-        print("💡 Check if MLflow server is running on port 5001")
+        print(" Experiment 'Brain_Tumor_Classification' not found!")
+        print(" Check if MLflow server is running on port 5001")
         return None
     
     runs = mlflow.search_runs(experiment_ids=[experiment.experiment_id])
     
-    # Find the run with highest accuracy
     best_run = runs.loc[runs['metrics.test_accuracy'].idxmax()]
     
     model_name = best_run['tags.mlflow.runName']
