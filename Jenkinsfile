@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Select Best Model') {
             steps {
-                sh 'python src/auto_deploy_best.py'
+                sh 'python3 src/auto_deploy_best.py'
             }
         }
     }
