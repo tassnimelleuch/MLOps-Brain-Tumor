@@ -1,39 +1,50 @@
 import mlflow
+import pandas as pd
 import os
 import pickle
 
 def auto_deploy_best_model():
-    # Set your MLflow tracking URI (CHANGE THIS TO YOUR SERVER)
-    mlflow.set_tracking_uri("http://localhost:5000")  # or your actual MLflow server
+    """AUTOMATICALLY find and deploy the best fucking model"""
     
-    # Get experiment
+    # SET THE CORRECT PORT - 5001 instead of 5000!
+    mlflow.set_tracking_uri("http://localhost:5001")
+    
+    # Get all experiments
     experiment = mlflow.get_experiment_by_name("Brain_Tumor_Classification")
     
     if experiment is None:
         print("❌ Experiment 'Brain_Tumor_Classification' not found!")
-        print("💡 Make sure MLflow tracking URI is correct and experiment exists.")
+        print("💡 Check if MLflow server is running on port 5001")
         return None
     
-    # Find best model
     runs = mlflow.search_runs(experiment_ids=[experiment.experiment_id])
     
-    if runs.empty:
-        print("❌ No runs found in experiment!")
-        return None
-    
+    # Find the run with highest accuracy
     best_run = runs.loc[runs['metrics.test_accuracy'].idxmax()]
+    
     model_name = best_run['tags.mlflow.runName']
     accuracy = best_run['metrics.test_accuracy']
+    run_id = best_run['run_id']
     
-    print(f"🔥 BEST MODEL: {model_name} (Accuracy: {accuracy:.4f})")
+    print(f"🔥 BEST MODEL FOUND: {model_name}")
+    print(f"🎯 ACCURACY: {accuracy:.4f}")
     
-    # Save dummy model for now (replace with actual model loading)
-    dummy_model = {"model_name": model_name, "accuracy": accuracy}
+    # Load the best fucking model
+    if "CNN" in model_name:
+        model_uri = f"runs:/{run_id}/cnn_model"
+        model = mlflow.tensorflow.load_model(model_uri)
+    elif "XGBoost" in model_name:
+        model_uri = f"runs:/{run_id}/xgboost_model" 
+        model = mlflow.xgboost.load_model(model_uri)
+    else:
+        model_uri = f"runs:/{run_id}/svm_model"
+        model = mlflow.sklearn.load_model(model_uri)
+    
     with open('production_model.pkl', 'wb') as f:
-        pickle.dump(dummy_model, f)
+        pickle.dump(model, f)
     
-    print("✅ Best model info saved!")
-    return dummy_model
+    print(f"🚀 AUTOMATICALLY DEPLOYED: {model_name}")
+    return model
 
 if __name__ == "__main__":
     auto_deploy_best_model()
