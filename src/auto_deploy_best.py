@@ -6,10 +6,8 @@ import pickle
 def auto_deploy_best_model():
     """AUTOMATICALLY find and deploy the best fucking model"""
     
-    # SET THE CORRECT PORT - 5001 instead of 5000!
     mlflow.set_tracking_uri("http://localhost:5001")
     
-    # Get all experiments
     experiment = mlflow.get_experiment_by_name("Brain_Tumor_Classification")
     
     if experiment is None:
