@@ -30,7 +30,7 @@ pipeline {
         
         stage('Get Best Model') {
             steps {
-                sh 'python src/select_best_model.py'
+                sh 'python3 src/select_best_model.py'
             }
         }
         
