@@ -4,7 +4,7 @@ import joblib
 import os
 
 def get_best_model():
-    # SET YOUR ACTUAL MLFLOW SERVER - NOT "your-mlflow-server"
+    # USE localhost since MLflow is on same machine as Jenkins
     mlflow.set_tracking_uri("http://localhost:5000")
     
     client = MlflowClient()
