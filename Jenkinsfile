@@ -9,7 +9,9 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git'
+                // ADD BRANCH SPECIFICATION
+                git branch: 'main',
+                    url: 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git'
             }
         }
         
