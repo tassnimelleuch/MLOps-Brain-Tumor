@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9-slim'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'  
-        }
-    }
+    agent any
     
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
@@ -16,15 +11,6 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/tassnimelleuch/MLOps-Brain-Tumor.git'
-            }
-        }
-        
-        stage('Install Dependencies') {
-            steps {
-                sh '''
-                    pip install -r requirements.txt
-                    pip install mlflow joblib
-                '''
             }
         }
         
